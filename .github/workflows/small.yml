@@ -1,7 +1,8 @@
 name: IPTV 直播源处理和去重
 
 on:
-  - cron: '0 01,10 * * *'
+  schedule:
+    - cron: '0 01,10 * * *'
   workflow_dispatch:
     inputs:
       keep_lines:
@@ -46,4 +47,4 @@ jobs:
         git commit -m "自动化 IPTV 直播源去重更新 $(date '+%Y-%m-%d %H:%M:%S')" || true  
 
         # 推送变更到当前分支（动态适配分支名）
-        git push origin ${{ github.ref_name }}  
+        git push origin ${{ github.ref_name }}
