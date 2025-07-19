@@ -1,4 +1,4 @@
-name: 'Update schedule'
+name: 'Update schedule2'
 
 on:
   schedule:
@@ -61,7 +61,7 @@ jobs:
           pip3 install --user pipenv
           pipenv --python 3.12
           pipenv install --deploy
-          pipenv install pytz  # 新增这一行，安装pytz库
+          pipenv install pytz  
           if [[ ${{ env.OPEN_DRIVER }} == 'True' ]]; then
             pipenv install selenium
           fi
