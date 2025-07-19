@@ -70,7 +70,7 @@ jobs:
         run: |
           export FINAL_FILE=output/result.txt  # 强制输出路径
           export CACHE_FILE=output/cache.pkl  
-          pipenv run python main2.py  # 仅修改这行，使用 pipenv 虚拟环境运行
+          pipenv run python main2.py  # 运行 main2.py
 
       - name: Check script exit code
         if: always()
@@ -101,4 +101,4 @@ jobs:
           fi
 
           git commit -m "Auto update: $(date +'%Y-%m-%d %H:%M')"
-          git push origin main --force-with-lease
+          git push origin main --force  # 改为无条件强制推送

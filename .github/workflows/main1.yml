@@ -1,4 +1,4 @@
-name: 'Update schedule2'
+name: 'Update schedule'
 
 on:
   schedule:
@@ -61,7 +61,7 @@ jobs:
           pip3 install --user pipenv
           pipenv --python 3.12
           pipenv install --deploy
-          pipenv install pytz  
+          pipenv install pytz  # 新增这一行，安装pytz库
           if [[ ${{ env.OPEN_DRIVER }} == 'True' ]]; then
             pipenv install selenium
           fi
@@ -101,4 +101,5 @@ jobs:
           fi
 
           git commit -m "Auto update: $(date +'%Y-%m-%d %H:%M')"
-          git push origin main --force-with-lease
+          # 改为无条件强制推送，覆盖远程分支
+          git push origin main --force
