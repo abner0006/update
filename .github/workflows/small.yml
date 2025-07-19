@@ -1,0 +1,49 @@
+name: IPTV 直播源处理和去重
+
+on:
+  - cron: '0 01,10 * * *'
+  workflow_dispatch:
+    inputs:
+      keep_lines:
+        description: '组内重复频道名保留行数（默认1）'
+        required: false
+        default: '1'
+
+jobs:
+  process:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: 拉取仓库代码
+      uses: actions/checkout@v4
+
+    - name: 设置 Python 3.10
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: 执行去重处理脚本
+      env:
+        KEEP_LINES: ${{ github.event.inputs.keep_lines }}  # 将输入参数传给脚本
+      run: |
+        # 创建输出目录（若不存在）
+        mkdir -p output  
+        # 直接运行 Python 脚本（脚本需放在仓库根目录）
+        python3 script.py  
+
+    - name: 提交并推送更新
+      run: |
+        # 配置 Git 身份（GitHub Action 专用）
+        git config user.email "action@github.com"  
+        git config user.name "GitHub Action Bot"  
+
+        # 暂存 output 目录下的所有 .txt 文件
+        git add output/*.txt  
+
+        # 提交变更（无变更时不报错）
+        git commit -m "自动化 IPTV 直播源去重更新 $(date '+%Y-%m-%d %H:%M:%S')" || true  
+
+        # 推送变更到当前分支（动态适配分支名）
+        git push origin ${{ github.ref_name }}  

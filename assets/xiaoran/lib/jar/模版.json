@@ -1,0 +1,101 @@
+{
+    "spider": "https://cnb.cool/fish2018/duanju/-/git/raw/main/jar/短剧.jar",
+    "warningText": "接口免费整理维护，请勿付费购买",
+    "lives": [
+        {
+            "name": "🐲青龙",
+            "type": 0,
+            "url": "https://pan.baidu.re/down.php/c0abcb4a572aef3c573a25227d90757c.txt",
+            "ua": "okhttp/3.15",
+            "epg": "http://epg.51zmt.top:8000/api/diyp/?ch={name}&date={date}",
+            "logo": "https://epg.112114.xyz/logo/{name}.png"
+        }
+    ],
+      "sites": [
+             {
+          "key": "cctv",
+          "name": "📺央视｜大全",
+         "type": 3,
+          "api": "csp_CCTV",
+          "searchable": 0,
+         "filterable": 0,
+           "ext": "https://gitee.com/lukei7/lib/raw/Luck/央视大全.json",
+          "jar": "https://gitee.com/lukei7/lib/raw/Luck/HeChengChaXiu.jar"
+            },         
+{
+          "key": "央视经典",
+                "name": "📺央视｜经典",
+                      "type": 3,
+                            "api": "csp_Bili",
+                                  "searchable": 0,
+                                        "quickSearch": 1,
+                                              "filterable": 1,
+                                                    "ext": "https://gitee.com/lukei7/lib/raw/Luck/%E5%93%94%E5%93%A9%E7%BB%8F%E5%85%B8.json"
+},
+{
+            "key": "阿里云盘",
+            "name": "阿里｜云盘",
+            "type": 3,
+            "api": "csp_PanAli",
+            "searchable": 0,
+            "filterable": 0,
+            "changeable": 0,
+            "style": {
+                "type": "list",
+                "ratio": 1.433
+            },
+            "ext": "./json/aliShare.json"
+        },
+        {
+            "key": "夸克云盘",
+            "name": "夸克｜云盘",
+            "type": 3,
+            "api": "csp_PanQuark",
+            "searchable": 0,
+            "filterable": 0,
+            "changeable": 0,
+            "style": {
+                "type": "list",
+                "ratio": 1.433
+            },
+            "ext": "./json/quarkShare.json"
+        },
+        {
+            "key": "UC",
+            "name": "UC｜云盘",
+            "type": 3,
+            "api": "csp_PanUc",
+            "searchable": 0,
+            "filterable": 0,
+            "changeable": 0,
+            "style": {
+                "type": "list",
+                "ratio": 1.433
+            },
+            "ext": "./json/ucShare.json"
+        },
+        {
+            "key": "百度云盘",
+            "name": "百度｜云盘",
+            "type": 3,
+            "api": "csp_PanBaiDu",
+            "searchable": 0,
+            "filterable": 0,
+            "changeable": 0,
+            "style": {
+                "type": "list",
+                "ratio": 1.433
+            }
+        },
+           {
+            "key": "py_蓝莓短剧",
+            "name": "✨蓝莓短剧✨",
+            "type": 3,
+            "api": "https://cnb.cool/fish2018/duanju/-/git/raw/main/py/py_蓝莓短剧.py",
+            "searchable": 1,
+            "quickSearch": 0,
+            "filterable": 0
+        }
+    ],
+    "wallpaper": "http://74.120.175.78/JK/api/bg/"
+}

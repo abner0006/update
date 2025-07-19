@@ -1,0 +1,160 @@
+name: 'Daily Job xiaoran'
+
+# 触发机制：定时执行 + 手动触发
+on:
+  schedule:
+    - cron: '30 22 * * *'  # UTC 22:30 → 北京时间 6:30
+    - cron: '30 10 * * *'  # UTC 10:30 → 北京时间 18:30
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: '部署环境'
+        required: true
+        default: 'production'
+
+# 环境变量：集中管理关键参数
+env:
+  PYTHON_VERSION: '3.10'        # Python 版本
+  RETAIN_DAYS: 7               # 归档保留天数（7天）
+  HISTORY_DIR: 'history'        # 归档目录
+  # 需要打包的文件（排除 .m3u 格式）
+  FILES_TO_ARCHIVE: >-
+    abner1.txt
+    abner2.txt
+    others_output.txt
+    tiyu.html
+    xiaoran.txt
+
+jobs:
+  run_job:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # 允许写入仓库
+      pull-requests: write  # 允许创建PR
+
+    steps:
+      # 1. 拉取仓库代码（最新版actions）
+      - name: 拉取仓库代码
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      # 2. 配置Python环境（最新版actions）
+      - name: 安装Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      # 3. 缓存Python依赖（加速安装）
+      - name: 缓存依赖包
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      # 4. 安装依赖（失败重试）
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          pip install opencc-python-reimplemented pytz || { 
+            echo "依赖安装失败，重试一次"; 
+            pip install opencc-python-reimplemented pytz; 
+          }
+
+      # 5. 同步远程代码并生成文件
+      - name: 同步代码并生成文件
+        run: |
+          # 配置Git身份
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+
+          # 拉取最新代码（失败则终止）
+          git reset --hard HEAD
+          git pull origin main --rebase || { 
+            echo "拉取代码失败，终止流程"; 
+            exit 1; 
+          }
+
+          # 生成文件（失败重试一次）
+          python main.py || { 
+            echo "首次生成文件失败，重试一次"; 
+            python main.py || { 
+              echo "生成文件失败，终止流程"; 
+              exit 1; 
+            } 
+          }
+
+      # 6. 检查关键文件完整性
+      - name: 校验文件完整性
+        run: |
+          # 检查核心文件是否存在且非空
+          critical_files=("abner1.txt" "xiaoran.txt")
+          for file in "${critical_files[@]}"; do
+            if [ ! -s "$file" ]; then
+              echo "错误：$file 为空或不存在，终止提交";
+              exit 1;
+            fi
+          done
+
+          # 检查xiaoran.txt包含关键内容
+          if ! grep -q "央视频道,#genre#" "xiaoran.txt"; then
+            echo "错误：xiaoran.txt 缺失关键分类，终止提交";
+            exit 1;
+          fi
+
+      # 7. 清理旧归档（只保留最近7天）
+      - name: 清理历史归档
+        run: |
+          mkdir -p ${{ env.HISTORY_DIR }}
+          # 删除超过保留天数的zip文件
+          find ${{ env.HISTORY_DIR }} -name "*.zip" -type f -mtime +${{ env.RETAIN_DAYS }} -delete
+
+      # 8. 生成新归档（仅打包非.m3u文件）
+      - name: 生成今日归档
+        run: |
+          # 检查文件是否有修改（无修改则不生成新归档）
+          if git diff --quiet ${{ env.FILES_TO_ARCHIVE }}; then
+            echo "文件未修改，不生成新归档";
+          else
+            current_datetime=$(date +"%Y%m%d_%H%M%S")
+            zip_filename="${{ env.HISTORY_DIR }}/${current_datetime}_archive.zip"
+            # 打包所有指定文件（排除.m3u）
+            zip -j "${zip_filename}" ${{ env.FILES_TO_ARCHIVE }}
+            git add "${zip_filename}"
+            echo "新归档生成：${zip_filename}"
+          fi
+
+      # 9. 提交所有修改并推送
+      - name: 提交并推送更改
+        run: |
+          # 提交主文件（含xiaoran系列、abner1系列等）
+          git add abner1.txt abner1.m3u abner2.txt abner2.m3u others_output.txt tiyu.html xiaoran.txt xiaoran.m3u ${{ env.HISTORY_DIR }}/
+          git commit -m ":tada: 自动更新 $(date +'%Y%m%d')" || echo "无主文件修改需提交"
+
+          # 推送至main分支
+          git push origin main || {
+            echo "直接推送失败，尝试备用方式";
+            # 备用推送（兼容分支保护）
+            temp_branch="auto-update-$(date +'%Y%m%d')"
+            git checkout -b $temp_branch
+            git push origin $temp_branch
+            echo "已推送至临时分支：$temp_branch，请手动合并至main";
+          }
+
+      # 10. 上传产物（方便调试）
+      - name: 保存生成的文件
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-files
+          path: |
+            abner1.txt
+            abner1.m3u
+            abner2.txt
+            abner2.m3u
+            others_output.txt
+            tiyu.html
+            xiaoran.txt
+            xiaoran.m3u
+            ${{ env.HISTORY_DIR }}/*.zip
