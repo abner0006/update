@@ -1,0 +1,104 @@
+name: 'Update schedule2'
+
+on:
+  schedule:
+    - cron: '0 03,15 * * *'
+  workflow_dispatch:
+    branches: [main]
+
+jobs:
+  update_and_push:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0  # 拉取全量代码
+
+      - name: Debug branch
+        run: |
+          echo "当前分支: $(git rev-parse --abbrev-ref HEAD)"
+          echo "当前提交: $(git rev-parse HEAD)"
+
+      - name: Create output directory
+        run: mkdir -p output
+
+      - name: Detect Chrome dependency
+        run: |
+          echo "OPEN_DRIVER=$(python -c '
+          try:
+            from utils.config import config
+            print(config.open_driver)
+          except:
+            print(False)')" >> $GITHUB_ENV
+
+      - name: Install Chrome (if needed)
+        if: env.OPEN_DRIVER == 'True'
+        uses: browser-actions/setup-chrome@latest
+        with:
+          chrome-version: stable
+
+      - name: Install ChromeDriver (if needed)
+        if: env.OPEN_DRIVER == 'True'
+        uses: nanasess/setup-chromedriver@master
+
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pipenv'
+
+      - name: Install dependencies
+        run: |
+          pip3 install --user pipenv
+          pipenv --python 3.12
+          pipenv install --deploy
+          pipenv install pytz  
+          if [[ ${{ env.OPEN_DRIVER }} == 'True' ]]; then
+            pipenv install selenium
+          fi
+
+      - name: Run update script
+        run: |
+          export FINAL_FILE=output/result.txt  # 强制输出路径
+          export CACHE_FILE=output/cache.pkl  
+          pipenv run python main2.py  # 运行 main2.py
+
+      - name: Check script exit code
+        if: always()
+        run: |
+          if [[ $? -ne 0 ]]; then
+            echo "脚本运行失败，退出码: $?"
+            exit 1
+          fi
+
+      - name: Debug output permissions
+        run: |
+          echo "output 目录权限:"
+          ls -ld output/
+          echo "文件列表:"
+          ls -l output/
+
+      - name: Safe commit changes
+        run: |
+          git config --local user.email "bot@github.com"
+          git config --local user.name "Stable Bot"
+
+          git add -A  # 兜底添加所有变更
+          git add -f output/result.txt output/result.m3u  # 确保关键文件
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          git commit -m "Auto update: $(date +'%Y-%m-%d %H:%M')"
+          git push origin main --force  # 改为无条件强制推送
