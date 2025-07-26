@@ -1,0 +1,75 @@
+name: special ☞ assets/special
+
+on:
+  schedule:
+    - cron: '0 18 * * *'  # UTC时间每天18点（北京时间次日2点）执行
+  workflow_dispatch:      # 允许手动触发
+
+permissions:
+  contents: write         # 允许推送代码到仓库
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    name: 整理并更新特殊直播源
+
+    steps:
+      - name: 📦 拉取仓库代码
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: 强制同步远程代码
+        run: git fetch --prune && git reset --hard origin/main
+
+      - name: 🐍 设置 Python 3.10 环境
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: 🔧 安装依赖（内置urllib，无需额外包）
+        run: python -m pip install --upgrade pip
+
+      - name: ▶️ 执行直播源整理脚本
+        run: python assets/special/special.py  # 从仓库根目录运行脚本
+
+      - name: 📋 验证输出结果
+        run: |
+          echo "输出文件内容检查："
+          if [ -f "output/special/live_special.txt" ]; then
+            echo "文件存在，内容行数：$(cat output/special/live_special.txt | wc -l)"
+            echo "前5行预览："
+            head -n 5 output/special/live_special.txt
+          else
+            echo "错误：未生成 output/special/live_special.txt"
+            exit 1
+          fi
+
+      - name: 💾 提交并推送变更
+        run: |
+          git config --local user.email "bot@github.com"
+          git config --local user.name "Stable Bot"
+          # 跟踪脚本、配置文件和输出结果
+          git add \
+            assets/special/special.py \
+            assets/special/urls.txt \
+            assets/special/ExcludeList.txt \
+            assets/special/rename.txt \
+            output/special/
+          
+          # 检查是否有变更
+          if git diff --staged --quiet; then
+            echo "⚠️ 无更新内容，跳过提交"
+            exit 0
+          fi
+          
+          git commit -m "自动更新特殊直播源（$(date +'%Y-%m-%d')）"
+          
+          # 处理冲突并推送
+          git pull origin main --rebase --autostash || {
+            echo "变基冲突，自动用远程最新代码覆盖本地";
+            git rebase --abort;
+            git pull origin main --force;
+          }
+          git push origin main --force-with-lease || git push --force origin main

@@ -1,0 +1,120 @@
+name: 'main1 ☞ output/result.txt ✔'
+
+on:
+  schedule:
+    - cron: '10 17 * * *'  # 定时任务触发时间（UTC时间）
+  workflow_dispatch:
+    branches: [main]  # 支持手动触发，限定在main分支
+
+jobs:
+  update_and_push:
+    runs-on: ubuntu-24.04  # 运行环境为Ubuntu 24.04
+    timeout-minutes: 120  # 任务超时时间（2小时）
+    permissions:
+      contents: write  # 允许写入仓库内容
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: main  # 拉取main分支代码
+          fetch-depth: 0  # 拉取完整的提交历史
+
+      - name: 强制拉取最新代码（应对仓库重建）
+        run: git fetch --prune && git reset --hard origin/main  # 确保本地代码与远程完全同步
+
+      - name: Debug branch
+        run: |
+          echo "当前分支: $(git rev-parse --abbrev-ref HEAD)"  # 输出当前分支名称
+          echo "当前提交: $(git rev-parse HEAD)"  # 输出当前提交哈希
+
+      - name: 创建输出目录
+        run: mkdir -p output  # 确保output目录存在
+
+      - name: 检测Chrome依赖配置
+        run: |
+          # 从配置中读取是否启用浏览器驱动，写入环境变量
+          echo "OPEN_DRIVER=$(python -c '
+          try:
+            from utils.config import config
+            print(config.open_driver)
+          except:
+            print(False)')" >> $GITHUB_ENV
+
+      - name: 安装Chrome浏览器（如需）
+        if: env.OPEN_DRIVER == 'True'  # 仅当启用浏览器驱动时执行
+        uses: browser-actions/setup-chrome@latest
+        with:
+          chrome-version: stable  # 安装稳定版Chrome
+
+      - name: 安装ChromeDriver（如需）
+        if: env.OPEN_DRIVER == 'True'  # 仅当启用浏览器驱动时执行
+        uses: nanasess/setup-chromedriver@master  # 安装对应版本的ChromeDriver
+
+      - name: 安装FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg  # 安装多媒体处理工具
+
+      - name: 配置Python 3.12环境
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'  # 指定Python版本
+          cache: 'pipenv'  # 启用pipenv依赖缓存
+
+      - name: 安装项目依赖
+        run: |
+          pip3 install --user pipenv  # 安装pipenv虚拟环境工具
+          pipenv --python 3.12  # 指定Python版本创建虚拟环境
+          pipenv install --deploy  # 从Pipfile.lock部署依赖
+          pipenv install pytz  # 安装时区处理依赖
+          # 如需浏览器驱动，额外安装selenium
+          if [[ ${{ env.OPEN_DRIVER }} == 'True' ]]; then
+            pipenv install selenium
+          fi
+
+      - name: 执行更新脚本
+        run: |
+          export FINAL_FILE=output/result.txt  # 定义输出文件路径环境变量
+          export CACHE_FILE=output/cache.pkl  # 定义缓存文件路径环境变量
+          pipenv run python main1.py  # 使用pipenv虚拟环境运行主脚本
+
+      - name: 检查脚本执行结果
+        if: always()  # 无论前一步是否成功都执行
+        run: |
+          # 若脚本退出码非0，输出错误信息并终止流程
+          if [[ $? -ne 0 ]]; then
+            echo "脚本运行失败，退出码: $?"
+            exit 1
+          fi
+
+      - name: 调试输出目录权限
+        run: |
+          echo "output 目录权限:"
+          ls -ld output/  # 输出目录权限信息
+          echo "文件列表:"
+          ls -l output/  # 输出目录内文件列表
+
+      - name: 安全提交更改
+        run: |
+          # 配置Git提交身份信息
+          git config --local user.email "bot@github.com"
+          git config --local user.name "Stable Bot"
+
+          git add -A  # 添加所有变更（兜底）
+          git add -f output/result.txt output/result.m3u  # 强制添加关键输出文件
+
+          # 若无可提交变更，退出流程
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          # 提交变更，包含时间戳
+          git commit -m "Auto update: $(date +'%Y-%m-%d %H:%M')"
+          # 拉取远程更新并处理冲突
+          git pull origin main --rebase --autostash --allow-unrelated-histories || {
+            echo "变基冲突，自动用远程最新代码覆盖本地";
+            git rebase --abort;
+            git pull origin main --force;
+          }
+          # 推送变更，优先安全推送，失败时强制推送
+          git push origin main --force-with-lease || git push origin main --force
