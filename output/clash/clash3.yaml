@@ -123,7 +123,7 @@ proxies:
   type: ss
 - alterId: 2
   cipher: auto
-  name: Hong Kong_Central_vmess_1012
+  name: Hong Kong_Tuen Mun_vmess_1012
   port: 30807
   server: v10.hdacd.com
   skip-cert-verify: false
@@ -214,7 +214,7 @@ proxies:
   type: ss
 - alterId: 2
   cipher: auto
-  name: Hong Kong_Central_vmess_1025
+  name: Hong Kong_Tuen Mun_vmess_1025
   network: tcp
   port: '30807'
   server: v10.hdacd.com
@@ -222,62 +222,41 @@ proxies:
   tls: false
   type: vmess
   uuid: cbb3f877-d1fb-344c-87a9-d153bffd5484
-- cipher: aes-256-gcm
-  name: United Kingdom_None_ss_1026
-  password: ZRpgaBeGxtENIXgvhpkZBKz9GnWRS2dYcx9O+a2iwN4=
-  port: 19999
-  server: 82.110.60.9
-  type: ss
-  udp: true
-- cipher: aes-256-cfb
-  name: Canada_Montreal_ss_1027
-  password: amazonskr05
-  port: 443
-  server: 35.182.182.58
-  type: ss
-  udp: true
-- cipher: aes-256-cfb
-  name: United States_None_ss_1028
-  password: amazonskr05
-  port: '443'
-  server: 16.52.165.74
-  type: ss
-  udp: true
 - client-fingerprint: chrome
-  name: Japan_None_trojan_1029
-  network: tcp
-  password: ultra@kWZdAzt_IH593eGLRjdxnBZ0
-  port: '10008'
-  server: z-jp2.1card.cc
-  skip-cert-verify: true
-  sni: z-jp2.1card.cc
+  name: None_None_trojan_1026
+  network: ws
+  password: humanity
+  port: '443'
+  server: 104.17.111.8
+  skip-cert-verify: false
+  sni: www.ignitelimit.com
   type: trojan
   udp: true
-- cipher: aes-256-cfb
-  name: Canada_Montreal_ss_1030
-  password: amazonskr05
+  ws-opts:
+    headers:
+      User-Agent: Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko)
+        Chrome/56.0.2924.87 Safari/537.36
+    path: /assignment
+- alpn:
+  - h3
+  - h2
+  - http/1.1
+  client-fingerprint: ios
+  name: Seychelles_None_trojan_1027
+  network: ws
+  password: humanity
   port: '443'
-  server: 15.223.195.102
-  type: ss
+  server: 45.130.125.158
+  skip-cert-verify: false
+  sni: www.ignitelimit.com
+  type: trojan
   udp: true
-- cipher: aes-256-cfb
-  name: Ireland_Dublin_ss_1031
-  password: amazonskr05
-  port: '443'
-  server: 52.211.103.59
-  type: ss
-  udp: true
-- cipher: chacha20-ietf-poly1305
-  name: Taiwan_Taichung_ss_1032
-  password: t0srmdxrm3xyjnvqz9ewlxb2myq7rjuv
-  plugin: obfs
-  plugin-opts:
-    host: (TG @WangCai2)aee97b7:155033
-    mode: tls
-  port: '2377'
-  server: 61.216.165.233
-  type: ss
-  udp: true
+  ws-opts:
+    headers:
+      User-Agent: Mozilla/5.0 (Linux; Android 5.1; HUAWEI CUN-L22 Build/HUAWEICUN-L22;
+        wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/62.0.3202.84
+        Mobile Safari/537.36
+    path: /assignment
 - alterId: 0
   cipher: auto
   name: Unknown_vmess_111
@@ -376,7 +355,7 @@ proxies:
   type: ss
 - alterId: 2
   cipher: auto
-  name: Hong Kong_Central_vmess_1112
+  name: Hong Kong_Tuen Mun_vmess_1112
   port: 30807
   server: v10.hdacd.com
   skip-cert-verify: false
@@ -467,7 +446,7 @@ proxies:
   type: ss
 - alterId: 2
   cipher: auto
-  name: Hong Kong_Central_vmess_1125
+  name: Hong Kong_Tuen Mun_vmess_1125
   network: tcp
   port: '30807'
   server: v10.hdacd.com
@@ -475,62 +454,41 @@ proxies:
   tls: false
   type: vmess
   uuid: cbb3f877-d1fb-344c-87a9-d153bffd5484
-- cipher: aes-256-gcm
-  name: United Kingdom_None_ss_1126
-  password: ZRpgaBeGxtENIXgvhpkZBKz9GnWRS2dYcx9O+a2iwN4=
-  port: 19999
-  server: 82.110.60.9
-  type: ss
-  udp: true
-- cipher: aes-256-cfb
-  name: Canada_Montreal_ss_1127
-  password: amazonskr05
-  port: 443
-  server: 35.182.182.58
-  type: ss
-  udp: true
-- cipher: aes-256-cfb
-  name: United States_None_ss_1128
-  password: amazonskr05
-  port: '443'
-  server: 16.52.165.74
-  type: ss
-  udp: true
 - client-fingerprint: chrome
-  name: United States_None_trojan_1129
-  network: tcp
-  password: ultra@kWZdAzt_IH593eGLRjdxnBZ0
-  port: '10008'
-  server: z-jp2.1card.cc
-  skip-cert-verify: true
-  sni: z-jp2.1card.cc
+  name: None_None_trojan_1126
+  network: ws
+  password: humanity
+  port: '443'
+  server: 104.17.111.8
+  skip-cert-verify: false
+  sni: www.ignitelimit.com
   type: trojan
   udp: true
-- cipher: aes-256-cfb
-  name: Canada_Montreal_ss_1130
-  password: amazonskr05
+  ws-opts:
+    headers:
+      User-Agent: Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko)
+        Chrome/56.0.2924.87 Safari/537.36
+    path: /assignment
+- alpn:
+  - h3
+  - h2
+  - http/1.1
+  client-fingerprint: ios
+  name: Seychelles_None_trojan_1127
+  network: ws
+  password: humanity
   port: '443'
-  server: 15.223.195.102
-  type: ss
+  server: 45.130.125.158
+  skip-cert-verify: false
+  sni: www.ignitelimit.com
+  type: trojan
   udp: true
-- cipher: aes-256-cfb
-  name: Ireland_Dublin_ss_1131
-  password: amazonskr05
-  port: '443'
-  server: 52.211.103.59
-  type: ss
-  udp: true
-- cipher: chacha20-ietf-poly1305
-  name: Taiwan_Taichung_ss_1132
-  password: t0srmdxrm3xyjnvqz9ewlxb2myq7rjuv
-  plugin: obfs
-  plugin-opts:
-    host: (TG @WangCai2)aee97b7:155033
-    mode: tls
-  port: '2377'
-  server: 61.216.165.233
-  type: ss
-  udp: true
+  ws-opts:
+    headers:
+      User-Agent: Mozilla/5.0 (Linux; Android 5.1; HUAWEI CUN-L22 Build/HUAWEICUN-L22;
+        wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/62.0.3202.84
+        Mobile Safari/537.36
+    path: /assignment
 proxy-groups:
 - name: 节点选择
   type: select
@@ -548,7 +506,7 @@ proxy-groups:
   - Unknown_vmess_109
   - Unknown_vmess_1010
   - United States_None_ss_1011
-  - Hong Kong_Central_vmess_1012
+  - Hong Kong_Tuen Mun_vmess_1012
   - China_None_ss_1013
   - China_None_ss_1014
   - Hong Kong_None_trojan_1015
@@ -561,14 +519,9 @@ proxy-groups:
   - China_None_ss_1022
   - United States_None_trojan_1023
   - China_None_ss_1024
-  - Hong Kong_Central_vmess_1025
-  - United Kingdom_None_ss_1026
-  - Canada_Montreal_ss_1027
-  - United States_None_ss_1028
-  - Japan_None_trojan_1029
-  - Canada_Montreal_ss_1030
-  - Ireland_Dublin_ss_1031
-  - Taiwan_Taichung_ss_1032
+  - Hong Kong_Tuen Mun_vmess_1025
+  - None_None_trojan_1026
+  - Seychelles_None_trojan_1027
   - Unknown_vmess_111
   - Unknown_vmess_112
   - Unknown_vmess_113
@@ -580,7 +533,7 @@ proxy-groups:
   - Unknown_vmess_119
   - Unknown_vmess_1110
   - United States_None_ss_1111
-  - Hong Kong_Central_vmess_1112
+  - Hong Kong_Tuen Mun_vmess_1112
   - China_None_ss_1113
   - China_None_ss_1114
   - Hong Kong_None_trojan_1115
@@ -593,14 +546,9 @@ proxy-groups:
   - China_None_ss_1122
   - United States_None_trojan_1123
   - China_None_ss_1124
-  - Hong Kong_Central_vmess_1125
-  - United Kingdom_None_ss_1126
-  - Canada_Montreal_ss_1127
-  - United States_None_ss_1128
-  - United States_None_trojan_1129
-  - Canada_Montreal_ss_1130
-  - Ireland_Dublin_ss_1131
-  - Taiwan_Taichung_ss_1132
+  - Hong Kong_Tuen Mun_vmess_1125
+  - None_None_trojan_1126
+  - Seychelles_None_trojan_1127
 - name: 自动选择
   type: url-test
   url: http://www.gstatic.com/generate_204
@@ -618,7 +566,7 @@ proxy-groups:
   - Unknown_vmess_109
   - Unknown_vmess_1010
   - United States_None_ss_1011
-  - Hong Kong_Central_vmess_1012
+  - Hong Kong_Tuen Mun_vmess_1012
   - China_None_ss_1013
   - China_None_ss_1014
   - Hong Kong_None_trojan_1015
@@ -631,14 +579,9 @@ proxy-groups:
   - China_None_ss_1022
   - United States_None_trojan_1023
   - China_None_ss_1024
-  - Hong Kong_Central_vmess_1025
-  - United Kingdom_None_ss_1026
-  - Canada_Montreal_ss_1027
-  - United States_None_ss_1028
-  - Japan_None_trojan_1029
-  - Canada_Montreal_ss_1030
-  - Ireland_Dublin_ss_1031
-  - Taiwan_Taichung_ss_1032
+  - Hong Kong_Tuen Mun_vmess_1025
+  - None_None_trojan_1026
+  - Seychelles_None_trojan_1027
   - Unknown_vmess_111
   - Unknown_vmess_112
   - Unknown_vmess_113
@@ -650,7 +593,7 @@ proxy-groups:
   - Unknown_vmess_119
   - Unknown_vmess_1110
   - United States_None_ss_1111
-  - Hong Kong_Central_vmess_1112
+  - Hong Kong_Tuen Mun_vmess_1112
   - China_None_ss_1113
   - China_None_ss_1114
   - Hong Kong_None_trojan_1115
@@ -663,14 +606,9 @@ proxy-groups:
   - China_None_ss_1122
   - United States_None_trojan_1123
   - China_None_ss_1124
-  - Hong Kong_Central_vmess_1125
-  - United Kingdom_None_ss_1126
-  - Canada_Montreal_ss_1127
-  - United States_None_ss_1128
-  - United States_None_trojan_1129
-  - Canada_Montreal_ss_1130
-  - Ireland_Dublin_ss_1131
-  - Taiwan_Taichung_ss_1132
+  - Hong Kong_Tuen Mun_vmess_1125
+  - None_None_trojan_1126
+  - Seychelles_None_trojan_1127
 rules:
 - DOMAIN,clash.razord.top,DIRECT
 - DOMAIN,yacd.haishan.me,DIRECT
